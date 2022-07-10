@@ -1,0 +1,47 @@
+<configuration>
+    <property name="ROOT_LOG_DIR" value="${MY_HOME}/log/admrun/JB2/appl"/>
+    <property name="LOG_FILE" value=".log" />
+
+    <springProfile name="dev">
+        <property name="ROOT_LOG_DIR" value="./log"/>
+    </springProfile>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
+        <encoder>
+            <pattern>
+                %magenta(%d{yyyy-MM-dd}T%d{HH:mm:ss.SSSZ})|%highlight(%-5level)|%c|%X{INITIATOR_ACCOUNT_ID}|%X{CORRELATION_REQUEST_ID}|%msg %replace(%ex){'[\r\n]+', '\\n'}%nopex%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${ROOT_LOG_DIR}/exception.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${ROOT_LOG_DIR}/exception.%d{yyyy-MM-dd}${LOG_FILE}.%i.gz</fileNamePattern>
+            <maxFileSize>1GB</maxFileSize>
+            <totalSizeCap>10GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="qa,prod">
+        <root level="ERROR">
+            <appender-ref ref="APPENDER"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="dev">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        <logger name="org.springframework" level="INFO" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+    </springProfile>
+
+</configuration>
