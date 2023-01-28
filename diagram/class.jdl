@@ -1,115 +1,118 @@
-
-entity Region {
-	regionName String
+entity UserAccount {
+  id Long
+  username String
+  password String
+  firstName String
+  lastName String
+  email String
+  confirmedEmail Boolean
+  phoneNumber String
+  imageUrl String
+  birthDate Date
+  lastLogin Instant
+  userType UserType
+  weightSystem WeightSystem
+  language Language
+  currency Currency
 }
 
-entity Country {
-	countryName String
+enum Currency {
+  EURO,
+  DOLLAR,
+  POUND,
+  SWISS_FRANK
 }
 
-// an ignored comment
-/** not an ignored comment */
-entity Location {
-	streetAddress String
-	postalCode String
-	city String
-	stateProvince String
+enum WeightSystem {
+  METRIC,
+  IMPERIAL
 }
 
-entity Department {
-	departmentName String required
-}
-
-/**
- * Task entity.
- * @author The JHipster team.
- */
-entity Task {
-	title String
-	description String
-}
-
-/**
- * The Employee entity.
- */
-entity Employee {
-	/**
-	* The firstname attribute.
-	*/
-	firstName String
-	lastName String
-	email String
-	phoneNumber String
-	hireDate Instant
-	salary Long
-	commissionPct Long
-}
-
-entity Job {
-	jobTitle String
-	minSalary Long
-	maxSalary Long
-}
-
-entity JobHistory {
-	startDate Instant
-	endDate Instant
-	language Language
+enum UserType {
+  PRIVATE,
+  PERSONAL_TRAINER
 }
 
 enum Language {
-    FRENCH, ENGLISH, SPANISH
+  PORTUGUESE,
+  ENGLISH,
+  GERMAN,
+  FRENCH,
+  SPANISH
 }
 
-relationship OneToOne {
-	Country{region} to Region
+entity UserHealthProfile {
+  gender Gender
+  height Integer
+  weight Integer
+  jobType JobType
 }
 
-relationship OneToOne {
-	Location{country} to Country
+entity UserHabits_Embeddable {
+  isSmoker Boolean
+  cigPerDay Integer
+  smokeYears Integer
+  averageWorkoutsPerWeek Integer
+  averageSleepHours Float
+  alcoholGlassesPerWeek Integer
+
 }
 
-relationship OneToOne {
-	Department{location} to Location
+entity UserPhysicalCheckupResults_Embeddable {
+  testosteroneLevel Integer
+  estrogenLevel Integer
+  bloodPressure Integer
+  restingHeartRate Integer
+  hdlCholesterol Integer
+  ldlCholesterol Integer
+  triglycerides Integer
+  fastingBloodSugar Integer
 }
 
-relationship ManyToMany {
-	Job{task(title)} to Task{job}
+enum JobType {
+  PHYSICAL_LABOR,
+  SEDENTARY
 }
 
-// defining multiple OneToMany relationships with comments
+enum Gender {
+  MALE,
+  FEMALE
+}
+
+entity FoodNutritionSummary {
+  id Long
+  name String
+  carbs Integer
+  fat Integer
+  protein Integer
+  totalCalories Integer
+}
+
+entity FoodNutritionFavorites {
+  id Long
+  name String
+  carbs Integer
+  fat Integer
+  protein Integer
+  lastUpdate Instant
+}
+
+entity PhysicalEvaluation {
+  id Long
+  healthParameter Integer
+  value Integer
+  lastUpdate Instant
+  result Integer
+  personalTrainerId Long
+}
+
 relationship OneToMany {
-	Employee to Job{employee}
-	/**
-	* A relationship
-	*/
-	Department to
-	/**
-	* Another side of the same relationship
-	*/
-	Employee{department}
+  UserAccount to FoodNutritionFavorites{user}
+  UserAccount to PhysicalEvaluation{user}
 }
 
-relationship ManyToOne {
-	Employee{manager} to Employee
-}
-
-// defining multiple oneToOne relationships
 relationship OneToOne {
-	JobHistory{job} to Job
-	JobHistory{department} to Department
-	JobHistory{employee} to Employee
+  UserAccount to UserHealthProfile
+  UserHealthProfile to UserHabits_Embeddable
+  UserHabits_Embeddable to UserPhysicalCheckupResults_Embeddable
 }
-
-// Set pagination options
-paginate JobHistory, Employee with infinite-scroll
-paginate Job with pagination
-
-// Use Data Transfer Objects (DTO)
-// dto * with mapstruct
-
-// Set service options to all except few
-service all with serviceImpl except Employee, Job
-
-// Set an angular suffix
-// angularSuffix * with mySuffix
