@@ -11,9 +11,13 @@ entity UserAccount {
   birthDate Date
   lastLogin Instant
   userType UserType
+}
+
+entity UserPreferences_Embeddable {
   weightSystem WeightSystem
   language Language
   currency Currency
+  country String
 }
 
 enum Currency {
@@ -115,4 +119,5 @@ relationship OneToOne {
   UserAccount to UserHealthProfile
   UserHealthProfile to UserHabits_Embeddable
   UserHabits_Embeddable to UserPhysicalCheckupResults_Embeddable
+  UserAccount to UserPreferences_Embeddable
 }
