@@ -110,9 +110,43 @@ entity PhysicalEvaluation {
   personalTrainerId Long
 }
 
+entity Workout {
+  sport String
+  startDate Date
+  finishDate Date
+  weekDay String
+  startingWeight Integer
+  finishWeight Integer
+  type WorkoutType
+}
+
+enum WorkoutType {
+  Aerobic,
+  Anaerobic
+}
+
+entity AerobicExercise {
+  name String
+  distance Integer
+  duration Integer
+  intensity Integer
+}
+entity AnaerobicExercise {
+  name String
+  muscleGroup String
+  sets Integer
+  reps Integer
+  intensity Integer
+  restInterval Integer
+  note String
+}
+
 relationship OneToMany {
   UserAccount to FoodNutritionFavorites{user}
   UserAccount to PhysicalEvaluation{user}
+  UserAccount to Workout{userId}
+  Workout to AerobicExercise{workoutId}
+  Workout to AnaerobicExercise{workoutId}
 }
 
 relationship OneToOne {
