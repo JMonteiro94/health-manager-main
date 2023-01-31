@@ -130,7 +130,10 @@ entity AerobicExercise {
   distance Integer
   duration Integer
   intensity Integer
+  calories Integer
+  averageHeartRate Integer
 }
+
 entity AnaerobicExercise {
   name String
   muscleGroup String
