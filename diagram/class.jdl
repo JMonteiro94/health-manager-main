@@ -144,10 +144,52 @@ entity AnaerobicExercise {
   note String
 }
 
+entity BodyMeasure {
+  machine String
+  date Date
+  weekDay String
+}
+
+entity GeneralAssessment_Embeddable {
+  weight BigDecimal
+  bodyFat BigDecimal
+  muscleMass BigDecimal
+  boneMass BigDecimal
+  bodyMass BigDecimal
+  basalMetabolicRate BigDecimal
+  metabolicAge BigDecimal
+  totalWater BigDecimal
+  visceralFat BigDecimal
+}
+
+entity CardiovascularAssessment_Embeddable {
+  neck BigDecimal
+  rightArm BigDecimal
+  leftArm BigDecimal
+  chest BigDecimal
+  waist BigDecimal
+  hip BigDecimal
+  abdominal BigDecimal
+  rightThigh BigDecimal
+  leftThigh BigDecimal
+  rightCalf BigDecimal
+  leftCalf BigDecimal
+}
+
+entity SkinFoldAssessment_Embeddable {
+  triceps BigDecimal
+  bicep BigDecimal
+  subScapular BigDecimal
+  iliocrystal BigDecimal
+  surpraespinal BigDecimal
+  abdominal BigDecimal
+}
+
 relationship OneToMany {
   UserAccount to FoodNutritionFavorites{user}
   UserAccount to PhysicalEvaluation{user}
   UserAccount to Workout{userId}
+  UserAccount to BodyMeasure{userId}
   Workout to AerobicExercise{workoutId}
   Workout to AnaerobicExercise{workoutId}
 }
@@ -157,4 +199,7 @@ relationship OneToOne {
   UserHealthProfile to UserHabits_Embeddable
   UserHabits_Embeddable to UserPhysicalCheckupResults_Embeddable
   UserAccount to UserPreferences_Embeddable
+  BodyMeasure to GeneralAssessment_Embeddable
+  BodyMeasure to CardiovascularAssessment_Embeddable
+  BodyMeasure to SkinFoldAssessment_Embeddable
 }

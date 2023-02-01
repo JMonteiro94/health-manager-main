@@ -112,6 +112,11 @@ public class UserAccount implements Serializable {
   @Exclude
   private Set<Workout> userWorkouts;
 
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+  @JsonIgnore
+  @Exclude
+  private Set<BodyMeasure> bodyMeasures;
+
   @JsonIgnore
   @ManyToMany
   @JoinTable(
