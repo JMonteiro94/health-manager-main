@@ -1,5 +1,6 @@
 package com.myhealth.healthmanagermain.domain;
 
+import java.math.BigDecimal;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class UserHabits {
   private Integer cigPerDay;
   private Integer smokeYears;
   private Integer averageWorkoutsPerWeek;
-  private Float averageSleepHours;
+  private BigDecimal averageSleepHours;
   private Integer alcoholGlassesPerWeek;
   @Embedded
   private UserPhysicalCheckupResults physicalCheckupResults;

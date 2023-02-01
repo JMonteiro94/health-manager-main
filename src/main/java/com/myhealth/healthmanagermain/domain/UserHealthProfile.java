@@ -2,6 +2,7 @@ package com.myhealth.healthmanagermain.domain;
 
 import com.myhealth.healthmanagermain.domain.enums.Gender;
 import com.myhealth.healthmanagermain.domain.enums.JobType;
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -43,7 +44,7 @@ public class UserHealthProfile {
 
   @NotNull
   @Column(name = "weight")
-  private Integer weight;
+  private BigDecimal weight;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "jobType", nullable = false)

@@ -48,7 +48,7 @@ enum Language {
 entity UserHealthProfile {
   gender Gender
   height Integer
-  weight Integer
+  weight BigDecimal
   jobType JobType
 }
 
@@ -57,7 +57,7 @@ entity UserHabits_Embeddable {
   cigPerDay Integer
   smokeYears Integer
   averageWorkoutsPerWeek Integer
-  averageSleepHours Float
+  averageSleepHours BigDecimal
   alcoholGlassesPerWeek Integer
 
 }
