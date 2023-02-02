@@ -1,16 +1,11 @@
 package com.myhealth.healthmanagermain.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.myhealth.healthmanagermain.domain.enums.WorkoutType;
-import java.math.BigDecimal;
-import java.time.DayOfWeek;
 import java.util.Calendar;
 import java.util.Set;
-import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,8 +32,8 @@ import lombok.ToString.Exclude;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "workout")
-public class Workout {
+@Table(name = "meal")
+public class Meal {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,26 +44,10 @@ public class Workout {
   @Column(name = "place", nullable = false)
   private String place;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "type", nullable = false)
-  private WorkoutType type;
-
   @NotNull
   @Column(name = "date")
   @Temporal(TemporalType.DATE)
   private Calendar date;
-
-  @Nullable
-  @Column(name = "starting_weight")
-  private BigDecimal startingWeight;
-
-  @Nullable
-  @Column(name = "finish_weight")
-  private BigDecimal finishWeight;
-
-  @Enumerated(EnumType.STRING)
-  @Column(name = "week_day", nullable = false)
-  private DayOfWeek weekDay;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "user_id")
@@ -77,13 +56,7 @@ public class Workout {
   @ToString.Exclude
   private UserAccount user;
 
-  @OneToMany(mappedBy = "workout")
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "meal")
   @Exclude
-  private Set<AerobicExercise> aerobicExercises;
-
-  @OneToMany(mappedBy = "workout")
-  @Exclude
-  private Set<AnaerobicExercise> anaerobicExercises;
+  private Set<MealFoodDetails> mealFoodDetails;
 }
-
-

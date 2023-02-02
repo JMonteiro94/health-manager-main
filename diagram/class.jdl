@@ -113,11 +113,10 @@ entity PhysicalEvaluation {
 entity Workout {
   sport String
   place String
-  startDate Date
-  finishDate Date
+  date Date
   weekDay String
-  startingWeight Integer
-  finishWeight Integer
+  startingWeight BigDecimal
+  finishWeight BigDecimal
   type WorkoutType
 }
 
@@ -186,11 +185,29 @@ entity SkinFoldAssessment_Embeddable {
   abdominal BigDecimal
 }
 
+entity Meal {
+  date Date
+  place String
+}
+
+entity MealFoodDetails {
+  name String
+  quantity BigDecimal
+  quantityUnit String
+  carbs Integer
+  fat Integer
+  protein Integer
+  userFavoritesId Integer
+  foodNutritionSummaryId Integer
+}
+
 relationship OneToMany {
   UserAccount to FoodNutritionFavorites{user}
   UserAccount to PhysicalEvaluation{user}
   UserAccount to Workout{userId}
   UserAccount to BodyMeasure{userId}
+  UserAccount to Meal{userId}
+  Meal to MealFoodDetails{mealId}
   Workout to AerobicExercise{workoutId}
   Workout to AnaerobicExercise{workoutId}
 }

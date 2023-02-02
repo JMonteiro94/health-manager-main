@@ -117,6 +117,11 @@ public class UserAccount implements Serializable {
   @Exclude
   private Set<BodyMeasure> bodyMeasures;
 
+  @OneToMany(mappedBy = "user")
+  @JsonIgnore
+  @Exclude
+  private Set<Meal> meals;
+
   @JsonIgnore
   @ManyToMany
   @JoinTable(
