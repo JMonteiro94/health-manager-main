@@ -112,6 +112,7 @@ entity PhysicalEvaluation {
 
 entity Workout {
   sport String
+  place String
   startDate Date
   finishDate Date
   weekDay String
