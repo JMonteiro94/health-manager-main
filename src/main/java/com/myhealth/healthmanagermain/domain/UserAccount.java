@@ -122,6 +122,21 @@ public class UserAccount implements Serializable {
   @Exclude
   private Set<Meal> meals;
 
+  @OneToMany(mappedBy = "user")
+  @JsonIgnore
+  @Exclude
+  private Set<ExerciseDefinition> exerciseDefinitions;
+
+  @OneToMany(mappedBy = "user")
+  @JsonIgnore
+  @Exclude
+  private Set<Goal> goals;
+
+  @OneToMany(mappedBy = "user")
+  @JsonIgnore
+  @Exclude
+  private Set<PersonalRecord> personalRecords;
+
   @JsonIgnore
   @ManyToMany
   @JoinTable(

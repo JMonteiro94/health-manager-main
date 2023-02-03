@@ -201,15 +201,64 @@ entity MealFoodDetails {
   foodNutritionSummaryId Integer
 }
 
+entity ExerciseDefinition {
+  name String
+  muscleGroups TextBlob
+}
+
+entity Goal {
+  name String
+  exercise String
+  goalType GoalType
+  timeWindow TimeWindow
+  targetValue BigDecimal
+  windowNumber Integer
+  startDate LocalDate
+  finishDate LocalDate
+}
+
+enum GoalType {
+  VOLUME,
+  PR
+}
+
+enum TimeWindow {
+  WEEK,
+  MONTH,
+  QUARTER,
+  SEMESTER,
+  ANNUAL
+}
+
+entity PersonalRecord {
+  exercise String
+  value BigDecimal
+  type RecordType
+}
+
+enum RecordType {
+  LOAD,
+  VOLUME,
+  DISTANCE,
+  SPEED,
+  REPS,
+  SETS
+}
+
 relationship OneToMany {
   UserAccount to FoodNutritionFavorites{user}
   UserAccount to PhysicalEvaluation{user}
   UserAccount to Workout{userId}
   UserAccount to BodyMeasure{userId}
   UserAccount to Meal{userId}
+  UserAccount to ExerciseDefinition{userId}
+  UserAccount to PersonalRecord{userId}
+  UserAccount to Goal{userId}
+  Workout to PersonalRecord{workoutId}
   Meal to MealFoodDetails{mealId}
   Workout to AerobicExercise{workoutId}
   Workout to AnaerobicExercise{workoutId}
+  ExerciseDefinition to Goal{exerciseDefinitionId}
 }
 
 relationship OneToOne {
