@@ -163,6 +163,12 @@ entity GeneralAssessment_Embeddable {
 }
 
 entity CardiovascularAssessment_Embeddable {
+  systolicBloodPressure Integer
+  diastolicBloodPressure Integer
+  restingHearRate Integer
+}
+
+entity BodyPerimetersAssessment_Embeddable {
   neck BigDecimal
   rightArm BigDecimal
   leftArm BigDecimal
@@ -269,4 +275,5 @@ relationship OneToOne {
   BodyMeasure to GeneralAssessment_Embeddable
   BodyMeasure to CardiovascularAssessment_Embeddable
   BodyMeasure to SkinFoldAssessment_Embeddable
+  BodyMeasure to BodyPerimetersAssessment_Embeddable
 }

@@ -61,6 +61,9 @@ public class BodyMeasure {
   private CardiovascularAssessment cardiovascularAssessment;
 
   @Embedded
+  private BodyPerimeterAssessment bodyPerimeterAssessment;
+
+  @Embedded
   private SkinFoldAssessment skinFoldAssessment;
 
   @ManyToOne(optional = false, fetch = FetchType.LAZY)

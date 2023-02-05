@@ -11,10 +11,10 @@ import lombok.ToString;
 @Embeddable
 public class SkinFoldAssessment {
 
-  private Float triceps;
-  private Float bicep;
-  private Float subScapular;
-  private Float iliocrystal;
-  private Float surpraespinal;
-  private Float abdominal;
+  private Float tricepsFold;
+  private Float bicepFold;
+  private Float subScapularFold;
+  private Float iliocrystalFold;
+  private Float surpraespinalFold;
+  private Float abdominalFold;
 }

@@ -11,15 +11,8 @@ import lombok.ToString;
 @Embeddable
 public class CardiovascularAssessment {
 
-  private Float neck;
-  private Float rightArm;
-  private Float leftArm;
-  private Float chest;
-  private Float waist;
-  private Float hip;
-  private Float abdominal;
-  private Float rightThigh;
-  private Float leftThigh;
-  private Float rightCalf;
-  private Float leftCalf;
+  private Integer systolicBloodPressure;
+  private Integer diastolicBloodPressure;
+  private Integer restingHearRate;
+
 }
