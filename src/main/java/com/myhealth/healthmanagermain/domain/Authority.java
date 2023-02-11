@@ -1,57 +1,49 @@
 package com.myhealth.healthmanagermain.domain;
 
+import java.io.Serializable;
+import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "authority")
 public class Authority implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+  @Id
+  @NotNull
+  @Size(min = 3, max = 50)
+  @Column(length = 50)
+  private String name;
 
-    @NotNull
-    @Size(max = 50)
-    @Id
-    @Column(length = 50)
-    private String name;
-
-    public String getName() {
-        return name;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
-
-    public void setName(String name) {
-        this.name = name;
+    if (!(o instanceof Authority other)) {
+      return false;
     }
+    return Objects.equals(name, other.name);
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(name);
+  }
 
-        Authority authority = (Authority) o;
-
-        return !(name != null ? !name.equals(authority.name) : authority.name != null);
-    }
-
-    @Override
-    public int hashCode() {
-        return name != null ? name.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return "Authority{" +
-                "name='" + name + '\'' +
-                "}";
-    }
 }
 
