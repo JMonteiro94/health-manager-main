@@ -2,10 +2,13 @@ management:
   endpoint:
     shutdown:
       enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: *
+app:
+  security:
+    jwt:
+      secret: MjgxZjEzYzRiNzRmY2Y3MWMxMDg4M2NhNzg3YjIwOWViM2Q0MTNjMmU1YmJjZDc0MTAxNWYzN2EzNTg5YmM0MjYwY2E4OWQzNmZiZDMyMzk3MThjYzgzZDY0NzRiZGUwNjIyMDFhZDEwOGJiZjQ1MWJkZTIwYzQyNWMxMmNkNWM
+      token-validity-in-seconds: 86400
+      token-validity-in-seconds-remember-me: 2592000
+
 spring:
   profiles:
     active: dev

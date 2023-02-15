@@ -16,6 +16,12 @@ spring:
     livereload:
       enabled: false
 
+app:
+  security:
+    jwt:
+      secret: secret
+      token-validity-in-seconds: 86400
+      token-validity-in-seconds-remember-me: 604800
 
 management:
   endpoints:
