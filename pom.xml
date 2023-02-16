@@ -376,29 +376,48 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
-              <rules>
-                <bannedDependencies>
-                  <excludes>
-                    <exclude>junit:junit</exclude>
-                  </excludes>
-                </bannedDependencies>
-              </rules>
+              <testExcludes>
+                <testExclude>com/mycompany/myapp/config/MysqlTestContainer.java</testExclude>
+              </testExcludes>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.owasp</groupId>
-        <artifactId>dependency-check-maven</artifactId>
-        <version>5.2.4</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+          </plugin>
+        </plugins>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-failsafe-plugin</artifactId>
+              <version>${maven-failsafe-plugin.version}</version>
+              <configuration>
+                <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                <runOrder>alphabetical</runOrder>
+                <includes>
+                  <include>**/*IT*</include>
+                  <include>**/*IntTest*</include>
+                </includes>
+                <argLine>@{argLine} -Dspring.profiles.active=dev</argLine>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>integration-test</id>
+                  <goals>
+                    <goal>integration-test</goal>
+                  </goals>
+                </execution>
+                <execution>
+                  <id>verify</id>
+                  <goals>
+                    <goal>verify</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+      <properties>
+        <spring.profiles.active>dev</spring.profiles.active>
+      </properties>
+    </profile>
+  </profiles>
 </project>
