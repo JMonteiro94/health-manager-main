@@ -7,6 +7,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -18,7 +19,7 @@ public class JWTFilter extends GenericFilterBean {
   public static final String AUTHORIZATION_HEADER = "Authorization";
   public static final String BEARER = "Bearer ";
 
-
+  @NonNull
   private final TokenProvider tokenProvider;
 
   @Override
@@ -37,7 +38,7 @@ public class JWTFilter extends GenericFilterBean {
   private String resolveToken(HttpServletRequest request) {
     String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
     if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
-      return bearerToken.substring(7);
+      return bearerToken.substring(BEARER.length());
     }
     return null;
   }

@@ -6,8 +6,8 @@ import com.myhealth.healthmanagermain.security.jwt.JWTToken;
 import com.myhealth.healthmanagermain.security.jwt.TokenProvider;
 import com.myhealth.healthmanagermain.web.rest.vm.LoginVM;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class UserJWTController {
 
-  @NotNull
+  @NonNull
   private final TokenProvider tokenProvider;
-  @NotNull
+  @NonNull
   private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
   @MeasureTime
