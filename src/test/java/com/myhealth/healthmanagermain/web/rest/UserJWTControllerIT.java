@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @IntegrationTest
 class UserJWTControllerIT {
 
+  private static final String API_AUTHENTICATE_PATH = "/api/authenticate";
   @Autowired
   private UserAccountRepository userRepository;
 
@@ -54,7 +55,7 @@ class UserJWTControllerIT {
     LoginVM login = new LoginVM("user-jwt-controller", "test", false);
 
     mockMvc
-        .perform(post("/api/authenticate").contentType(MediaType.APPLICATION_JSON)
+        .perform(post(API_AUTHENTICATE_PATH).contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(login)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id_token").isString())
@@ -80,7 +81,7 @@ class UserJWTControllerIT {
     LoginVM login = new LoginVM("user-jwt-controller-remember-me", "test", true);
 
     mockMvc
-        .perform(post("/api/authenticate").contentType(MediaType.APPLICATION_JSON)
+        .perform(post(API_AUTHENTICATE_PATH).contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(login)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id_token").isString())
@@ -95,7 +96,7 @@ class UserJWTControllerIT {
     LoginVM login = new LoginVM("wrong-user", "wrong password", false);
 
     mockMvc
-        .perform(post("/api/authenticate")
+        .perform(post(API_AUTHENTICATE_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(login)))
         .andExpect(status().isUnauthorized())
