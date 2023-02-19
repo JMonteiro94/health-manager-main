@@ -1,19 +1,21 @@
 package com.myhealth.healthmanagermain.service.domain.impl;
 
-import com.myhealth.healthmanagermain.config.Constants;
-import com.myhealth.healthmanagermain.domain.Authority;
+import com.myhealth.healthmanagermain.bootstrap.RandomDataUtil;
 import com.myhealth.healthmanagermain.domain.UserAccount;
-import com.myhealth.healthmanagermain.repository.AuthorityRepository;
 import com.myhealth.healthmanagermain.repository.UserAccountRepository;
 import com.myhealth.healthmanagermain.security.SecurityUtils;
 import com.myhealth.healthmanagermain.service.domain.UserAccountService;
+import com.myhealth.healthmanagermain.service.dto.AdminUserDTO;
 import com.myhealth.healthmanagermain.service.dto.UserAccountDTO;
+import com.myhealth.healthmanagermain.web.rest.errors.InvalidPasswordException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
@@ -27,130 +29,172 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 public class UserAccountServiceImpl implements UserAccountService {
 
-  private final UserAccountRepository userAccountRepository;
-  private final AuthorityRepository authorityRepository;
-  private final CacheManager cacheManager;
+  @NonNull
+  private final UserAccountRepository userRepository;
+  @NonNull
   private final PasswordEncoder passwordEncoder;
-
-
-  public UserAccount createUser(UserAccountDTO userAccountDTO) {
-    UserAccount userAccount = new UserAccount();
-    userAccount.setUsername(userAccountDTO.getUsername().toLowerCase());
-    userAccount.setFirstName(userAccountDTO.getFirstName());
-    userAccount.setLastName(userAccountDTO.getLastName());
-    userAccount.setEmail(userAccountDTO.getEmail().toLowerCase());
-    userAccount.setImageUrl(userAccountDTO.getImageUrl());
-    userAccount.setLangKey(userAccountDTO.getLangKey());
-    userAccount.setPassword(passwordEncoder.encode(userAccount.getPassword()));
-    userAccount.setActivated(true);
-    if (userAccountDTO.getAuthorities() != null) {
-      Set<Authority> authorities = userAccountDTO.getAuthorities().stream()
-          .map(authorityRepository::findById)
-          .filter(Optional::isPresent)
-          .map(Optional::get)
-          .collect(Collectors.toSet());
-      userAccount.setAuthorities(authorities);
-    }
-    userAccountRepository.save(userAccount);
-    this.clearUserCaches(userAccount);
-    log.debug("Created Information for User: {}", userAccount);
-    return userAccount;
-  }
+  @NonNull
+  private final CacheManager cacheManager;
 
   @Override
-  public void updateUser(String firstName, String lastName, String email, String langKey,
-      String imageUrl) {
-    SecurityUtils.getCurrentUserLogin()
-        .flatMap(userAccountRepository::findOneByUsername)
-        .ifPresent(user -> {
-          user.setFirstName(firstName);
-          user.setLastName(lastName);
-          user.setEmail(email.toLowerCase());
-          user.setLangKey(langKey);
-          user.setImageUrl(imageUrl);
-          this.clearUserCaches(user);
-          log.debug("Changed Information for User: {}", user);
-        });
-  }
-
-  @Override
-  public Optional<UserAccountDTO> updateUser(UserAccountDTO userAccountDTO) {
-    return Optional.of(userAccountRepository
-            .findById(userAccountDTO.getId()))
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .map(user -> {
-          this.clearUserCaches(user);
-          user.setUsername(userAccountDTO.getUsername().toLowerCase());
-          user.setFirstName(userAccountDTO.getFirstName());
-          user.setLastName(userAccountDTO.getLastName());
-          user.setEmail(userAccountDTO.getEmail().toLowerCase());
-          user.setImageUrl(userAccountDTO.getImageUrl());
-          user.setActivated(userAccountDTO.isActivated());
-          user.setLangKey(userAccountDTO.getLangKey());
-          Set<Authority> managedAuthorities = user.getAuthorities();
-          managedAuthorities.clear();
-          userAccountDTO.getAuthorities().stream()
-              .map(authorityRepository::findById)
-              .filter(Optional::isPresent)
-              .map(Optional::get)
-              .forEach(managedAuthorities::add);
-          this.clearUserCaches(user);
-          log.debug("Changed Information for User: {}", user);
-          return user;
-        })
-        .map(UserAccountDTO::new);
-  }
-
-  @Override
-  public void deleteUser(String login) {
-    userAccountRepository.findOneByUsername(login).ifPresent(user -> {
-      userAccountRepository.delete(user);
-      this.clearUserCaches(user);
-      log.debug("Deleted User: {}", user);
-    });
+  @Transactional(readOnly = true)
+  public Optional<UserAccount> getUserById(@NonNull Long id) {
+    return userRepository.findById(id);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public Page<UserAccountDTO> getAllManagedUsers(Pageable pageable) {
-    return userAccountRepository.findAllByUsernameNot(pageable, Constants.ANONYMOUS_USER)
-        .map(UserAccountDTO::new);
+  public Optional<UserAccount> getUserByUsername(@NonNull String username) {
+    return userRepository.findOneByUsername(username.toLowerCase(Locale.ENGLISH));
   }
 
   @Override
   @Transactional(readOnly = true)
-  public Optional<UserAccount> getUserWithAuthoritiesByLogin(String login) {
-    return userAccountRepository.findOneWithAuthoritiesByUsername(login);
+  public Optional<UserAccount> getUserByEmail(@NonNull String email) {
+    return userRepository.findOneByEmailIgnoreCase(email);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public Optional<UserAccount> getUserWithAuthorities(Long id) {
-    return userAccountRepository.findOneWithAuthoritiesById(id);
+  public Page<AdminUserDTO> getAllManagedUsers(@NonNull Pageable pageable) {
+    return userRepository.findAll(pageable).map(AdminUserDTO::new);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Page<UserAccountDTO> getAllPublicUsers(@NonNull Pageable pageable) {
+    return userRepository.findAllByIdNotNullAndActivatedIsTrue(pageable).map(UserAccountDTO::new);
   }
 
   @Override
   @Transactional(readOnly = true)
   public Optional<UserAccount> getUserWithAuthorities() {
     return SecurityUtils.getCurrentUserLogin()
-        .flatMap(userAccountRepository::findOneWithAuthoritiesByUsername);
+        .flatMap(userRepository::findOneWithAuthoritiesByUsername);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public List<String> getAuthorities() {
-    return authorityRepository.findAll().stream().map(Authority::getName).toList();
+  public Optional<UserAccount> getUserWithAuthoritiesByEmail(@NonNull String email) {
+    return userRepository
+        .findOneWithAuthoritiesByEmailIgnoreCase(email);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public Optional<UserAccount> getUserByEmail(String email) {
-    return userAccountRepository.findOneByEmailIgnoreCase(email);
+  public Optional<UserAccount> getUserWithAuthoritiesByUsername(@NonNull String username) {
+    return userRepository
+        .findOneWithAuthoritiesByUsername(username.toLowerCase(Locale.ENGLISH));
   }
 
-  private void clearUserCaches(UserAccount userAccount) {
+  @Override
+  @Transactional
+  public void deleteByUsername(@NonNull String username) {
+    getUserByUsername(username)
+        .ifPresent(this::deleteUser);
+  }
+
+  @Override
+  @Transactional
+  public void deleteUser(@NonNull UserAccount userAccount) {
+    userRepository.delete(userAccount);
+    userRepository.flush();
+    this.clearUserCaches(userAccount);
+    log.debug("Deleted UserAccount: {}", userAccount);
+  }
+
+  @Override
+  @Transactional
+  public void save(@NonNull UserAccount userAccount) {
+    userRepository.save(userAccount);
+  }
+
+  @Override
+  @Transactional
+  public void saveAndFlush(@NonNull UserAccount userAccount) {
+    userRepository.saveAndFlush(userAccount);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Optional<UserAccount> getUserByResetKey(@NonNull String key) {
+    return userRepository
+        .findOneByResetKey(key);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Optional<UserAccount> getUserByActivationKey(@NonNull String key) {
+    return userRepository.findOneByActivationKey(key);
+  }
+
+  @Override
+  @Transactional
+  public void activateUser(@NonNull UserAccount userAccount) {
+    userAccount.setActivated(true);
+    userAccount.setActivationKey(null);
+    save(userAccount);
+  }
+
+  @Override
+  @Transactional
+  public void resetUserKey(@NonNull UserAccount userAccount) {
+    userAccount.setResetKey(RandomDataUtil.generateResetKey());
+    userAccount.setResetDate(Instant.now());
+    save(userAccount);
+  }
+
+  @Override
+  @Transactional
+  public void resetUserPassword(@NonNull UserAccount userAccount, @NonNull String password) {
+    userAccount.setPassword(passwordEncoder.encode(password));
+    userAccount.setResetKey(null);
+    userAccount.setResetDate(null);
+    save(userAccount);
+  }
+
+  @Override
+  @Transactional
+  public void updateUserPassword(@NonNull UserAccount userAccount,
+      @NonNull String oldNotEncryptedPassword,
+      String newPassword) {
+    String currentEncryptedPassword = userAccount.getPassword();
+    if (!passwordEncoder.matches(oldNotEncryptedPassword, currentEncryptedPassword)) {
+      throw new InvalidPasswordException();
+    }
+    String encryptedPassword = passwordEncoder.encode(newPassword);
+    userAccount.setPassword(encryptedPassword);
+    save(userAccount);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<UserAccount> getAllDeactivatedUsersCreatedBeforeXDays(int days) {
+    return userRepository
+        .findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(
+            Instant.now().minus(days, ChronoUnit.DAYS));
+  }
+
+  @Override
+  @Transactional
+  public void deleteAll() {
+    userRepository.deleteAll();
+    userRepository.flush();
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<UserAccount> getAll() {
+    return userRepository.findAll();
+  }
+
+
+  private void clearUserCaches(@NonNull UserAccount userAccount) {
     Objects.requireNonNull(cacheManager.getCache(UserAccountRepository.USERS_BY_USERNAME_CACHE))
         .evict(userAccount.getUsername());
+    if (userAccount.getEmail() != null) {
+      Objects.requireNonNull(cacheManager.getCache(UserAccountRepository.USERS_BY_EMAIL_CACHE))
+          .evict(userAccount.getEmail());
+    }
   }
 }

@@ -44,6 +44,5 @@ public class Authority implements Serializable {
   public int hashCode() {
     return Objects.hashCode(name);
   }
-
 }
 
