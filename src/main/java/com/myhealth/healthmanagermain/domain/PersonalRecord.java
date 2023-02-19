@@ -2,6 +2,7 @@ package com.myhealth.healthmanagermain.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myhealth.healthmanagermain.domain.enums.RecordType;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +31,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Entity
 @Table(name = "personal_record")
-public class PersonalRecord {
+public class PersonalRecord implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,8 +43,8 @@ public class PersonalRecord {
   private String exercise;
 
   @NotNull
-  @Column(name = "value", precision = 50, scale = 10)
-  private BigDecimal value;
+  @Column(name = "target", precision = 50, scale = 10)
+  private BigDecimal target;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "record_type", nullable = false)
@@ -55,4 +56,22 @@ public class PersonalRecord {
   @JsonIgnore
   @ToString.Exclude
   private UserAccount user;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof PersonalRecord other)) {
+      return false;
+    }
+
+    return id != null &&
+        id.equals(other.getId());
+  }
+
+  @Override
+  public int hashCode() {
+    return getClass().hashCode();
+  }
 }
