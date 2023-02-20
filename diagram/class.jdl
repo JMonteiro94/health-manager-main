@@ -239,6 +239,7 @@ enum TimeWindow {
 entity PersonalRecord {
   exercise String
   target BigDecimal
+  weightSystem WeightSystem
   type RecordType
 }
 

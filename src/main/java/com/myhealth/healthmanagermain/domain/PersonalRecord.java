@@ -2,6 +2,7 @@ package com.myhealth.healthmanagermain.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myhealth.healthmanagermain.domain.enums.RecordType;
+import com.myhealth.healthmanagermain.domain.enums.WeightSystem;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.Column;
@@ -45,6 +46,11 @@ public class PersonalRecord implements Serializable {
   @NotNull
   @Column(name = "target", precision = 50, scale = 10)
   private BigDecimal target;
+
+  @NotNull
+  @Enumerated(EnumType.STRING)
+  @Column(name = "weight_system", nullable = false)
+  private WeightSystem weightSystem;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "record_type", nullable = false)
