@@ -1,6 +1,5 @@
 package com.myhealth.healthmanagermain.security;
 
-import com.myhealth.healthmanagermain.aop.timer.MeasureTime;
 import com.myhealth.healthmanagermain.domain.Authority;
 import com.myhealth.healthmanagermain.domain.UserAccount;
 import com.myhealth.healthmanagermain.service.domain.UserAccountService;
@@ -26,7 +25,6 @@ public class DomainUserDetailsService implements UserDetailsService {
   private final UserAccountService userAccountService;
 
   @Override
-  @MeasureTime
   public UserDetails loadUserByUsername(final String username) {
     log.debug("Authenticating {}", username);
     if (new EmailValidator().isValid(username, null)) {

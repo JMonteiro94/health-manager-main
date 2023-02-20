@@ -12,8 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.myhealth.healthmanagermain.IntegrationTest;
 import com.myhealth.healthmanagermain.domain.UserAccount;
 import com.myhealth.healthmanagermain.domain.enums.UserType;
-import com.myhealth.healthmanagermain.repository.UserAccountRepository;
-import com.myhealth.healthmanagermain.web.rest.vm.LoginVM;
+import com.myhealth.healthmanagermain.service.domain.UserAccountService;
+import com.myhealth.healthmanagermain.web.rest.vm.Login;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 @AutoConfigureMockMvc
 @IntegrationTest
@@ -30,7 +29,7 @@ class UserJWTControllerIT {
 
   private static final String API_AUTHENTICATE_PATH = "/api/authenticate";
   @Autowired
-  private UserAccountRepository userRepository;
+  private UserAccountService userAccountService;
 
   @Autowired
   private PasswordEncoder passwordEncoder;
@@ -39,7 +38,6 @@ class UserJWTControllerIT {
   private MockMvc mockMvc;
 
   @Test
-  @Transactional
   @DisplayName("get JWT token for existing and valid user")
   void testAuthorize() throws Exception {
     UserAccount user = new UserAccount();
@@ -50,9 +48,9 @@ class UserJWTControllerIT {
     user.setBirthDate(LocalDate.parse("2017-11-15"));
     user.setType(UserType.PRIVATE);
 
-    userRepository.saveAndFlush(user);
+    userAccountService.saveAndFlush(user);
 
-    LoginVM login = new LoginVM("user-jwt-controller", "test", false);
+    Login login = new Login("user-jwt-controller", "test", false);
 
     mockMvc
         .perform(post(API_AUTHENTICATE_PATH).contentType(MediaType.APPLICATION_JSON)
@@ -65,7 +63,6 @@ class UserJWTControllerIT {
   }
 
   @Test
-  @Transactional
   @DisplayName("get JWT token for existing and valid user with remember me ")
   void testAuthorizeWithRememberMe() throws Exception {
     UserAccount user = new UserAccount();
@@ -76,9 +73,9 @@ class UserJWTControllerIT {
     user.setBirthDate(LocalDate.parse("2017-11-15"));
     user.setType(UserType.PRIVATE);
 
-    userRepository.saveAndFlush(user);
+    userAccountService.saveAndFlush(user);
 
-    LoginVM login = new LoginVM("user-jwt-controller-remember-me", "test", true);
+    Login login = new Login("user-jwt-controller-remember-me", "test", true);
 
     mockMvc
         .perform(post(API_AUTHENTICATE_PATH).contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +90,7 @@ class UserJWTControllerIT {
   @Test
   @DisplayName("get JWT token for user that does not exist")
   void testAuthorizeFails() throws Exception {
-    LoginVM login = new LoginVM("wrong-user", "wrong password", false);
+    Login login = new Login("wrong-user", "wrong password", false);
 
     mockMvc
         .perform(post(API_AUTHENTICATE_PATH)
