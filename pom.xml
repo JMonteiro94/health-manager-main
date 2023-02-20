@@ -31,7 +31,7 @@
     <zalando-spring-web.version>0.27.0</zalando-spring-web.version>
     <cache-api.version>1.1.1</cache-api.version>
     <javafaker.version>0.15</javafaker.version>
-    
+
     <!--    plugins   -->
     <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
     <argLine>-Djava.security.egd=file:/dev/./urandom -Xmx1G</argLine>
@@ -175,7 +175,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.9.1</version>
+      <version>5.8.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>

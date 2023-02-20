@@ -98,7 +98,7 @@ public class UserAccount implements Serializable {
   private String activationKey;
 
   @JsonIgnore
-  @Size(max = 20)
+  @Size(min = 20, max = 20)
   @Column(name = "reset_key", length = 20)
   private String resetKey;
 

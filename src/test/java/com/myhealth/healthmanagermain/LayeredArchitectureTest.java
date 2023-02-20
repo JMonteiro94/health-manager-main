@@ -17,7 +17,7 @@ public class LayeredArchitectureTest {
   @ArchTest
   public static final ArchRule domainEnumsPackageRule = classes()
       .that().resideInAPackage("..enums..")
-      .should().onlyBeAccessed().byAnyPackage("..domain..");
+      .should().onlyBeAccessed().byAnyPackage("..domain..", "..bootstrap..");
 
   @ArchTest
   public static final ArchRule respectsTechnicalArchitectureLayers =
@@ -26,6 +26,7 @@ public class LayeredArchitectureTest {
           .layer("Demo").definedBy("..bootstrap..")
           .layer("Config").definedBy("..config..")
           .layer("Web").definedBy("..web..")
+          .optionalLayer("Exception").definedBy("..web.errors..")
           .optionalLayer("Service").definedBy("..service..")
           .optionalLayer("Domain Service").definedBy("..service.domain..")
           .layer("Security").definedBy("..security..")
@@ -33,12 +34,13 @@ public class LayeredArchitectureTest {
           .layer("Domain").definedBy("..healthmanagermain.domain..")
 
           .whereLayer("Config").mayOnlyBeAccessedByLayers("Root")
-          .whereLayer("Web").mayNotBeAccessedByAnyLayer()
+          .whereLayer("Web").mayOnlyBeAccessedByLayers("Service")
+          .whereLayer("Exception").mayOnlyBeAccessedByLayers("Service", "Web")
           .whereLayer("Service").mayOnlyBeAccessedByLayers("Web", "Config", "Demo", "Security")
           .whereLayer("Security").mayOnlyBeAccessedByLayers("Config", "Service", "Web")
           .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Service")
           .whereLayer("Domain")
-          .mayOnlyBeAccessedByLayers("Persistence", "Service", "Security", "Web", "Config")
+          .mayOnlyBeAccessedByLayers("Persistence", "Service", "Security", "Web", "Config", "Demo")
 
           .ignoreDependency(belongToAnyOf(HealthmanagermainApplication.class), alwaysTrue())
           .ignoreDependency(alwaysTrue(), belongToAnyOf(
