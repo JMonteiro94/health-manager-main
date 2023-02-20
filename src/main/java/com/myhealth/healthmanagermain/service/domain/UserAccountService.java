@@ -3,6 +3,7 @@ package com.myhealth.healthmanagermain.service.domain;
 import com.myhealth.healthmanagermain.domain.UserAccount;
 import com.myhealth.healthmanagermain.service.dto.AdminUserDTO;
 import com.myhealth.healthmanagermain.service.dto.UserAccountDTO;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import lombok.NonNull;
@@ -33,6 +34,8 @@ public interface UserAccountService {
   void deleteUser(UserAccount userAccount);
 
   void save(UserAccount userAccount);
+
+  void saveAll(Collection<UserAccount> userAccount);
 
   @Transactional
   void saveAndFlush(@NonNull UserAccount userAccount);

@@ -10,6 +10,7 @@ import com.myhealth.healthmanagermain.service.dto.UserAccountDTO;
 import com.myhealth.healthmanagermain.web.rest.errors.InvalidPasswordException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -100,13 +101,19 @@ public class UserAccountServiceImpl implements UserAccountService {
     userRepository.delete(userAccount);
     userRepository.flush();
     this.clearUserCaches(userAccount);
-    log.debug("Deleted UserAccount: {}", userAccount);
+    log.debug("Deleted user: {}", userAccount.getUsername());
   }
 
   @Override
   @Transactional
   public void save(@NonNull UserAccount userAccount) {
     userRepository.save(userAccount);
+  }
+
+  @Override
+  @Transactional
+  public void saveAll(Collection<UserAccount> userAccount) {
+    userRepository.saveAll(userAccount);
   }
 
   @Override
@@ -118,8 +125,7 @@ public class UserAccountServiceImpl implements UserAccountService {
   @Override
   @Transactional(readOnly = true)
   public Optional<UserAccount> getUserByResetKey(@NonNull String key) {
-    return userRepository
-        .findOneByResetKey(key);
+    return userRepository.findOneByResetKey(key);
   }
 
   @Override
