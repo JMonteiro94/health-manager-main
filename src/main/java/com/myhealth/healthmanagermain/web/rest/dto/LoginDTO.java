@@ -1,4 +1,4 @@
-package com.myhealth.healthmanagermain.web.rest.vm;
+package com.myhealth.healthmanagermain.web.rest.dto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @AllArgsConstructor
-public final class Login {
+public final class LoginDTO {
 
   @NotBlank
   @Size(min = 1, max = 50)
