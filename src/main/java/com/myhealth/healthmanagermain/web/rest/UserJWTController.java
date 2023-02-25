@@ -4,7 +4,7 @@ import com.myhealth.healthmanagermain.aop.timer.MeasureTime;
 import com.myhealth.healthmanagermain.security.jwt.JWTFilter;
 import com.myhealth.healthmanagermain.security.jwt.JWTToken;
 import com.myhealth.healthmanagermain.security.jwt.TokenProvider;
-import com.myhealth.healthmanagermain.web.rest.vm.Login;
+import com.myhealth.healthmanagermain.web.rest.dto.LoginDTO;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -32,17 +32,17 @@ public class UserJWTController {
 
   @MeasureTime
   @PostMapping("/authenticate")
-  public ResponseEntity<JWTToken> authorize(@Valid @RequestBody Login login) {
+  public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginDTO loginDTO) {
     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-        login.getUsername(),
-        login.getPassword()
+        loginDTO.getUsername(),
+        loginDTO.getPassword()
     );
 
     Authentication authentication = authenticationManagerBuilder.getObject()
         .authenticate(authenticationToken);
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    String jwt = tokenProvider.createToken(authentication, login.isRememberMe());
+    String jwt = tokenProvider.createToken(authentication, loginDTO.isRememberMe());
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, JWTFilter.BEARER + jwt);
     return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);

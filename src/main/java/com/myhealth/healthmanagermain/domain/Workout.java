@@ -2,9 +2,11 @@ package com.myhealth.healthmanagermain.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myhealth.healthmanagermain.domain.enums.WorkoutType;
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import java.util.Set;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -18,8 +20,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -38,7 +38,10 @@ import lombok.ToString.Exclude;
 @AllArgsConstructor
 @Entity
 @Table(name = "workout")
-public class Workout {
+public class Workout implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,10 +56,13 @@ public class Workout {
   @Column(name = "type", nullable = false)
   private WorkoutType type;
 
+  @Nullable
+  @Column(name = "number")
+  private Long number;
+
   @NotNull
   @Column(name = "date")
-  @Temporal(TemporalType.DATE)
-  private Calendar date;
+  private ZonedDateTime date;
 
   @Nullable
   @Column(name = "starting_weight")
@@ -84,6 +90,10 @@ public class Workout {
   @OneToMany(mappedBy = "workout")
   @Exclude
   private Set<AnaerobicExercise> anaerobicExercises;
+
+  @OneToMany(mappedBy = "workout")
+  @Exclude
+  private Set<PersonalRecord> personalRecords;
 }
 
 

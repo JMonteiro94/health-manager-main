@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +21,25 @@ class SecurityUtilsUnitTest {
   @AfterEach
   void cleanup() {
     SecurityContextHolder.clearContext();
+  }
+
+  @Test
+  void testGetCurrentUsernameOrThrowException_isSuccessful() {
+    SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+    securityContext.setAuthentication(new UsernamePasswordAuthenticationToken("admin", "admin"));
+    SecurityContextHolder.setContext(securityContext);
+    String username = SecurityUtils.getCurrentUsernameOrThrowException();
+    assertThat(username).isEqualTo("admin");
+  }
+
+  @Test
+  void testGetCurrentUsernameOrThrowException_throwsException() {
+    SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+    SecurityContextHolder.setContext(securityContext);
+
+    Assertions.assertThrows(UserNotActivatedException.class,
+        SecurityUtils::getCurrentUsernameOrThrowException);
+
   }
 
   @Test

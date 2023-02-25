@@ -13,6 +13,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 @UtilityClass
 public final class SecurityUtils {
 
+  public static String getCurrentUsernameOrThrowException() {
+    Optional<String> usernameOptional = getCurrentUserLogin();
+    if (usernameOptional.isEmpty()) {
+      throw new UserNotActivatedException("Could not authenticate user");
+    }
+    return usernameOptional.get();
+  }
+
   public static Optional<String> getCurrentUserLogin() {
     SecurityContext securityContext = SecurityContextHolder.getContext();
     return Optional.ofNullable(extractPrincipal(securityContext.getAuthentication()));

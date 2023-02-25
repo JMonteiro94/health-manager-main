@@ -3,17 +3,23 @@ package com.myhealth.healthmanagermain.bootstrap;
 import com.myhealth.healthmanagermain.aop.timer.MeasureTime;
 import com.myhealth.healthmanagermain.config.Constants;
 import com.myhealth.healthmanagermain.domain.Authority;
+import com.myhealth.healthmanagermain.domain.PersonalRecord;
 import com.myhealth.healthmanagermain.domain.UserAccount;
 import com.myhealth.healthmanagermain.domain.UserPreferences;
+import com.myhealth.healthmanagermain.domain.Workout;
 import com.myhealth.healthmanagermain.domain.enums.Currency;
 import com.myhealth.healthmanagermain.domain.enums.Language;
 import com.myhealth.healthmanagermain.domain.enums.UserType;
 import com.myhealth.healthmanagermain.domain.enums.WeightSystem;
+import com.myhealth.healthmanagermain.domain.enums.WorkoutType;
 import com.myhealth.healthmanagermain.security.AuthoritiesConstants;
 import com.myhealth.healthmanagermain.service.domain.AuthorityService;
+import com.myhealth.healthmanagermain.service.domain.PersonalRecordService;
 import com.myhealth.healthmanagermain.service.domain.UserAccountService;
+import com.myhealth.healthmanagermain.service.domain.WorkoutService;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -37,6 +43,10 @@ public class DemoDataBoostrap implements ApplicationRunner {
   private final UserAccountService userAccountService;
   @NonNull
   private final PasswordEncoder passwordEncoder;
+  @NonNull
+  private final PersonalRecordService personalRecordService;
+  @NonNull
+  private final WorkoutService workoutService;
 
   @Override
   @MeasureTime
@@ -52,7 +62,13 @@ public class DemoDataBoostrap implements ApplicationRunner {
   }
 
   public void loadUserAccounts() {
-    userAccountService.saveAll(List.of(getValidRandomUserAccount(), getValidUserAccount()));
+    userAccountService.saveAll(List.of(getValidUserAccount()));
+    for (int i = 0; i < 5; i++) {
+      UserAccount randomUserAccount = getValidRandomUserAccount();
+      userAccountService.save(randomUserAccount);
+      Workout randomWorkout = workoutService.save(getRandomWorkout(randomUserAccount));
+      personalRecordService.save(getRandomPersonalRecord(randomUserAccount, randomWorkout));
+    }
   }
 
   public UserAccount getValidRandomUserAccount() {
@@ -95,5 +111,29 @@ public class DemoDataBoostrap implements ApplicationRunner {
         .currency(Currency.EURO)
         .language(Language.ENGLISH)
         .weightSystem(WeightSystem.METRIC).build();
+  }
+
+  public static PersonalRecord getRandomPersonalRecord(UserAccount userAccount, Workout workout) {
+    return PersonalRecord.builder()
+        .exercise("deadlift")
+        .target(RandomDataUtil.generateRandomPersonalRecordTarget())
+        .weightSystem(WeightSystem.METRIC)
+        .recordType(RandomDataUtil.generateRandomRecordType())
+        .user(userAccount)
+        .workout(workout)
+        .build();
+  }
+
+  public static Workout getRandomWorkout(UserAccount userAccount) {
+    return Workout.builder()
+        .place(RandomDataUtil.generateRandomName())
+        .number((long) RandomDataUtil.generateRandomNonZeroInteger())
+        .date(ZonedDateTime.now())
+        .type(WorkoutType.Anaerobic)
+        .startingWeight(RandomDataUtil.generateRandomWeight())
+        .weekDay(RandomDataUtil.generateRandomDayOfWeek())
+        .finishWeight(RandomDataUtil.generateRandomWeight())
+        .user(userAccount)
+        .build();
   }
 }

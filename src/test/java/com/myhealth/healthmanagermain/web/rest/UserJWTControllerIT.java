@@ -13,7 +13,7 @@ import com.myhealth.healthmanagermain.IntegrationTest;
 import com.myhealth.healthmanagermain.domain.UserAccount;
 import com.myhealth.healthmanagermain.domain.enums.UserType;
 import com.myhealth.healthmanagermain.service.domain.UserAccountService;
-import com.myhealth.healthmanagermain.web.rest.vm.Login;
+import com.myhealth.healthmanagermain.web.rest.dto.LoginDTO;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,11 +50,11 @@ class UserJWTControllerIT {
 
     userAccountService.saveAndFlush(user);
 
-    Login login = new Login("user-jwt-controller", "test", false);
+    LoginDTO loginDTO = new LoginDTO("user-jwt-controller", "test", false);
 
     mockMvc
         .perform(post(API_AUTHENTICATE_PATH).contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(login)))
+            .content(TestUtil.convertObjectToJsonBytes(loginDTO)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id_token").isString())
         .andExpect(jsonPath("$.id_token").isNotEmpty())
@@ -75,11 +75,11 @@ class UserJWTControllerIT {
 
     userAccountService.saveAndFlush(user);
 
-    Login login = new Login("user-jwt-controller-remember-me", "test", true);
+    LoginDTO loginDTO = new LoginDTO("user-jwt-controller-remember-me", "test", true);
 
     mockMvc
         .perform(post(API_AUTHENTICATE_PATH).contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(login)))
+            .content(TestUtil.convertObjectToJsonBytes(loginDTO)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id_token").isString())
         .andExpect(jsonPath("$.id_token").isNotEmpty())
@@ -90,12 +90,12 @@ class UserJWTControllerIT {
   @Test
   @DisplayName("get JWT token for user that does not exist")
   void testAuthorizeFails() throws Exception {
-    Login login = new Login("wrong-user", "wrong password", false);
+    LoginDTO loginDTO = new LoginDTO("wrong-user", "wrong password", false);
 
     mockMvc
         .perform(post(API_AUTHENTICATE_PATH)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(login)))
+            .content(TestUtil.convertObjectToJsonBytes(loginDTO)))
         .andExpect(status().isUnauthorized())
         .andExpect(jsonPath("$.id_token").doesNotExist())
         .andExpect(header().doesNotExist("Authorization"));

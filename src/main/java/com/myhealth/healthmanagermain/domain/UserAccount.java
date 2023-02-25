@@ -3,6 +3,7 @@ package com.myhealth.healthmanagermain.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myhealth.healthmanagermain.config.Constants;
 import com.myhealth.healthmanagermain.domain.enums.UserType;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -50,6 +51,9 @@ import org.springframework.data.annotation.CreatedDate;
 @Table(name = "user_account")
 public class UserAccount implements Serializable {
 
+  @Serial
+  private static final long serialVersionUID = 1L;
+  
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -151,6 +155,11 @@ public class UserAccount implements Serializable {
   @JsonIgnore
   @Exclude
   private Set<PersonalRecord> personalRecords = new HashSet<>();
+
+  @OneToMany(mappedBy = "user")
+  @JsonIgnore
+  @Exclude
+  private Set<UserHealthProfile> userHealthProfiles = new HashSet<>();
 
   @JsonIgnore
   @ManyToMany(fetch = FetchType.EAGER)

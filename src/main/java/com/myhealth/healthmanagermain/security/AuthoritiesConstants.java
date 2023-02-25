@@ -6,8 +6,8 @@ import lombok.experimental.UtilityClass;
 public final class AuthoritiesConstants {
 
   public static final String ADMIN = "ROLE_ADMIN";
-
   public static final String USER = "ROLE_USER";
+  public static final String INVALID_ROLE = "ROLE_INVALID";
 
   public static final String ANONYMOUS = "ROLE_ANONYMOUS";
 
