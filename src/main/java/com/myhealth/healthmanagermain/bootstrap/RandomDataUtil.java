@@ -7,6 +7,9 @@ import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Random;
 import lombok.experimental.UtilityClass;
@@ -59,6 +62,10 @@ public final class RandomDataUtil {
 
   public static String generateResetKey() {
     return generateRandomAlphanumericString();
+  }
+
+  public static ZonedDateTime generateRandomDate() {
+    return ZonedDateTime.of(generateRandomBirthDate(), LocalTime.now(), ZoneId.of("UTC"));
   }
 
   public static LocalDate generateRandomBirthDate() {

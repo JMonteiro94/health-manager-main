@@ -3,20 +3,25 @@ package com.myhealth.healthmanagermain.bootstrap;
 import com.myhealth.healthmanagermain.aop.timer.MeasureTime;
 import com.myhealth.healthmanagermain.config.Constants;
 import com.myhealth.healthmanagermain.domain.Authority;
+import com.myhealth.healthmanagermain.domain.Goal;
 import com.myhealth.healthmanagermain.domain.PersonalRecord;
 import com.myhealth.healthmanagermain.domain.UserAccount;
 import com.myhealth.healthmanagermain.domain.UserPreferences;
 import com.myhealth.healthmanagermain.domain.Workout;
 import com.myhealth.healthmanagermain.domain.enums.Currency;
+import com.myhealth.healthmanagermain.domain.enums.GoalType;
 import com.myhealth.healthmanagermain.domain.enums.Language;
+import com.myhealth.healthmanagermain.domain.enums.TimeWindow;
 import com.myhealth.healthmanagermain.domain.enums.UserType;
 import com.myhealth.healthmanagermain.domain.enums.WeightSystem;
 import com.myhealth.healthmanagermain.domain.enums.WorkoutType;
 import com.myhealth.healthmanagermain.security.AuthoritiesConstants;
 import com.myhealth.healthmanagermain.service.domain.AuthorityService;
+import com.myhealth.healthmanagermain.service.domain.GoalService;
 import com.myhealth.healthmanagermain.service.domain.PersonalRecordService;
 import com.myhealth.healthmanagermain.service.domain.UserAccountService;
 import com.myhealth.healthmanagermain.service.domain.WorkoutService;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -47,6 +52,8 @@ public class DemoDataBoostrap implements ApplicationRunner {
   private final PersonalRecordService personalRecordService;
   @NonNull
   private final WorkoutService workoutService;
+  @NonNull
+  private final GoalService goalService;
 
   @Override
   @MeasureTime
@@ -68,6 +75,7 @@ public class DemoDataBoostrap implements ApplicationRunner {
       userAccountService.save(randomUserAccount);
       Workout randomWorkout = workoutService.save(getRandomWorkout(randomUserAccount));
       personalRecordService.save(getRandomPersonalRecord(randomUserAccount, randomWorkout));
+      goalService.save(getRandomGoal(randomUserAccount));
     }
   }
 
@@ -133,6 +141,19 @@ public class DemoDataBoostrap implements ApplicationRunner {
         .startingWeight(RandomDataUtil.generateRandomWeight())
         .weekDay(RandomDataUtil.generateRandomDayOfWeek())
         .finishWeight(RandomDataUtil.generateRandomWeight())
+        .user(userAccount)
+        .build();
+  }
+
+  public static Goal getRandomGoal(UserAccount userAccount) {
+    return Goal.builder()
+        .name("deadlift PR")
+        .goalType(GoalType.PR)
+        .windowTime(TimeWindow.QUARTER)
+        .windowNumber(1)
+        .targetValue(new BigDecimal(1))
+        .startDate(RandomDataUtil.generateRandomDate())
+        .finishDate(RandomDataUtil.generateRandomDate())
         .user(userAccount)
         .build();
   }

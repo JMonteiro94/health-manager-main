@@ -3,6 +3,8 @@ package com.myhealth.healthmanagermain.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.myhealth.healthmanagermain.domain.enums.GoalType;
 import com.myhealth.healthmanagermain.domain.enums.TimeWindow;
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import javax.annotation.Nullable;
@@ -33,7 +35,10 @@ import lombok.ToString;
 @AllArgsConstructor
 @Entity
 @Table(name = "goal")
-public class Goal {
+public class Goal implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,13 +53,13 @@ public class Goal {
   @Column(name = "goal_type", nullable = false)
   private GoalType goalType;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "time_window", nullable = false)
-  private TimeWindow timeWindow;
-
   @NotNull
   @Column(name = "target_value", nullable = false)
   private BigDecimal targetValue;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "window_time", nullable = false)
+  private TimeWindow windowTime;
 
   @NotNull
   @Column(name = "window_number", nullable = false)
