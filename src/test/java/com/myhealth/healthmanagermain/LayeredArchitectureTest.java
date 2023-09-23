@@ -44,8 +44,7 @@ public class LayeredArchitectureTest {
 
           .ignoreDependency(belongToAnyOf(HealthmanagermainApplication.class), alwaysTrue())
           .ignoreDependency(alwaysTrue(), belongToAnyOf(
-              com.myhealth.healthmanagermain.config.Constants.class,
-              com.myhealth.healthmanagermain.config.ApplicationProperties.class
+              com.myhealth.healthmanagermain.config.Constants.class
           ));
 
   @ArchTest

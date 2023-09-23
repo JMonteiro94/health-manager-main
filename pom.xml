@@ -22,7 +22,7 @@
     <validation-api.version>2.0.1.Final</validation-api.version>
     <logback.version>1.2.11</logback.version>
     <archunit.version>1.0.1</archunit.version>
-    <springdoc-openapi.version>1.6.14</springdoc-openapi.version>
+    <springdoc-openapi.version>1.6.15</springdoc-openapi.version>
     <restdocs-mockmvc.version>2.0.6.RELEASE</restdocs-mockmvc.version>
     <spring-boot-tomcat.version>2.7.6</spring-boot-tomcat.version>
     <h2.version>2.1.214</h2.version>

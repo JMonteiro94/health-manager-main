@@ -80,9 +80,8 @@ public class Goal implements Serializable {
   @ToString.Exclude
   private UserAccount user;
 
-  @ManyToOne(optional = false)
+  @ManyToOne
   @JoinColumn(name = "exercise_definition_id")
-  @NotNull
   @JsonIgnore
   @ToString.Exclude
   private ExerciseDefinition exerciseDefinition;

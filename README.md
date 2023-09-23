@@ -11,6 +11,13 @@ Run with demo profile to have prefilled mocked data on database
 
 ## Usefull Plugins Commands
 
+Jacoco
+
+```
+mvn jacoco:report
+mvn jacoco:check
+```
+
 Check dependencies tree
 
 ```

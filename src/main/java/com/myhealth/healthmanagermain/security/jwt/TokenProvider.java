@@ -1,5 +1,6 @@
 package com.myhealth.healthmanagermain.security.jwt;
 
+import com.myhealth.healthmanagermain.config.properties.SecurityProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
@@ -15,12 +16,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.MissingResourceException;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,27 +32,20 @@ import org.springframework.stereotype.Component;
 public class TokenProvider {
 
   private static final String AUTHORITIES_KEY = "auth";
-
   private static final String INVALID_JWT_TOKEN = "Invalid JWT token.";
+
+  private final SecurityProperties securityProperties;
 
   private final Key key;
 
   private final JwtParser jwtParser;
 
-  private final long tokenValidityInMilliseconds;
-
-  private final long tokenValidityInMillisecondsForRememberMe;
-
-  public TokenProvider(@NonNull Environment env) {
-    String secret = env.getProperty("app.security.jwt.secret");
+  public TokenProvider(@NonNull SecurityProperties securityProperties) {
+    this.securityProperties = securityProperties;
+    String secret = securityProperties.getSecret();
     if (StringUtils.isBlank(secret)) {
       throw new MissingResourceException("JWT secret is missing", "TokenProvider", "secret");
     }
-    this.tokenValidityInMilliseconds = Long.parseLong(Objects.requireNonNull(env.getProperty(
-        "app.security.jwt.token-validity-in-seconds")));
-    this.tokenValidityInMillisecondsForRememberMe = Long.parseLong(
-        Objects.requireNonNull(env.getProperty(
-            "app.security.jwt.token-validity-in-seconds-remember-me")));
     key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
   }
@@ -65,9 +57,11 @@ public class TokenProvider {
     long now = (new Date()).getTime();
     Date validity;
     if (rememberMe) {
-      validity = new Date(now + this.tokenValidityInMillisecondsForRememberMe);
+      validity = new Date(
+          now + ((long) 1000 * this.securityProperties.getTokenValidityInSecondsRememberMe()));
     } else {
-      validity = new Date(now + this.tokenValidityInMilliseconds);
+      validity = new Date(
+          now + ((long) 1000 * this.securityProperties.getTokenValidityInSeconds()));
     }
 
     return Jwts
